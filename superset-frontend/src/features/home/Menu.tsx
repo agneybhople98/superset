@@ -45,12 +45,19 @@ const StyledHeader = styled.header`
       background-color: ${theme.colorBgContainer};
       border-bottom: 1px solid ${theme.colorBorderSecondary};
       z-index: 10;
-
+      display: none !important;
       &:nth-last-of-type(2) nav {
         margin-bottom: 2px;
       }
+      .main-nav{
+      display: none !important;
+      }
       .caret {
         display: none;
+      }
+      /* Hide all header elements */
+      &, & * {
+        display: none !important;
       }
       & .ant-image{
         display: contents;
@@ -61,7 +68,7 @@ const StyledHeader = styled.header`
           ${theme.sizeUnit * 4}px;
       }
       .navbar-brand {
-        display: flex;
+        display: none !important;
         flex-direction: column;
         justify-content: center;
         /* must be exactly the height of the Antd navbar */

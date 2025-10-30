@@ -329,7 +329,7 @@ AUTH_RATE_LIMIT = "5 per second"
 APP_NAME = "Superset"
 
 # Specify the App icon
-APP_ICON = "/static/assets/images/superset-logo-horiz.png"
+APP_ICON = "/static/assets/images/application-logo.svg"
 
 # Specify where clicking the logo would take the user'
 # Default value of None will take you to '/superset/welcome'
@@ -757,7 +757,7 @@ THEME_DEFAULT: Theme = {
         "brandLogoHeight": "24px",
         # Spinner
         "brandSpinnerUrl": None,
-        "brandSpinnerSvg": None,
+        "brandSpinnerSvg": '<svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M10.72,19.9a8,8,0,0,1-6.5-9.79A7.77,7.77,0,0,1,10.4,4.16a8,8,0,0,1,9.49,6.52A1.54,1.54,0,0,0,21.38,12h.13a1.37,1.37,0,0,0,1.38-1.54,11,11,0,1,0-12.7,12.39A1.54,1.54,0,0,0,12,21.34h0A1.47,1.47,0,0,0,10.72,19.9Z"><animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite"/></path></svg>',
         # Default colors
         "colorPrimary": "#2893B3",  # NOTE: previous lighter primary color was #20a7c9 # noqa: E501
         "colorLink": "#2893B3",
@@ -783,13 +783,11 @@ THEME_DEFAULT: Theme = {
 # Dark theme configuration - foundation for dark mode
 # Inherits all tokens from THEME_DEFAULT and adds dark algorithm
 # Set to None to disable dark mode
-THEME_DARK: Optional[Theme] = {
-    **THEME_DEFAULT,
-    "algorithm": "dark",
-}
+THEME_DARK: Optional[Theme] = None
 
 # Theme behavior and user preference settings
-# To force a single theme on all users, set THEME_DARK = None
+# Dark mode is disabled by setting THEME_DARK = None
+# This forces all users to use the light theme only
 # When both THEME_DEFAULT and THEME_DARK are defined:
 # - Users can manually switch between themes
 # - OS preference detection is automatically enabled
