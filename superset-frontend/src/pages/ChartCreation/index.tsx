@@ -281,7 +281,7 @@ export class ChartCreation extends PureComponent<
         </Link>{' '}
         {t('or')}{' '}
         <a
-          href="https://superset.apache.org/docs/creating-charts-dashboards/creating-your-first-dashboard/#registering-a-new-table"
+          href="https://docs.riaproducts.com/rda/3.x.x/docs/web-application/charts/"
           rel="noopener noreferrer"
           target="_blank"
           data-test="add-chart-new-dataset-instructions"
@@ -294,7 +294,7 @@ export class ChartCreation extends PureComponent<
     ) : (
       <span data-test="no-dataset-write">
         <a
-          href="https://superset.apache.org/docs/creating-charts-dashboards/creating-your-first-dashboard/#registering-a-new-table"
+          href="https://docs.riaproducts.com/rda/3.x.x/docs/web-application/charts/"
           rel="noopener noreferrer"
           target="_blank"
         >

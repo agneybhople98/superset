@@ -40,7 +40,7 @@ from typing import Any, Callable, Iterator, Literal, Optional, TYPE_CHECKING, Ty
 
 import click
 from celery.schedules import crontab
-from flask import Blueprint
+from flask import Blueprint, Flask
 from flask_appbuilder.security.manager import AUTH_DB
 from flask_caching.backends.base import BaseCache
 from pandas import Series
@@ -1392,11 +1392,94 @@ CONFIG_PATH_ENV_VAR = "SUPERSET_CONFIG_PATH"
 # Extension startup update configuration
 EXTENSION_STARTUP_LOCK_TIMEOUT = 30  # Timeout in seconds for extension update locks
 
+
+def app_mutator(app: Flask) -> Flask:
+    """
+    Inject CSS to hide Flask-AppBuilder navigation header.
+    CSS-only approach - no JavaScript, maximum security.
+
+    This mutator works in both development and production environments,
+    handling compressed responses and different response encodings.
+    """
+    @app.after_request
+    def hide_fab_navbar(response: Any) -> Any:
+        # Only process successful HTML responses
+        if (
+            response.status_code == 200
+            and response.content_type
+            and "text/html" in response.content_type
+        ):
+            try:
+                # CSS-only injection (no JavaScript)
+                injector = b"""
+                <style id="hide-fab-navbar">
+                  /* Hide Flask-AppBuilder navigation header */
+                  header.top[role=header],
+                  .navbar.navbar-inverse,
+                  nav.navbar.navbar-inverse {
+                    display: none !important;
+                    visibility: hidden !important;
+                    height: 0 !important;
+                    overflow: hidden !important;
+                  }
+
+                  /* Add spacing to main content containers */
+                  .container,
+                  .main-content,
+                  body > .container {
+                    margin: 20px auto 0 !important;
+                    padding-top: 10px !important;
+                  }
+
+                  /* Remove any navbar-related padding */
+                  body.navbar-fixed {
+                    padding-top: 20px !important;
+                  }
+                </style>
+                """
+
+                # Get response data as bytes
+                # Handle both bytes and string responses
+                if isinstance(response.data, str):
+                    response_data = response.data.encode("utf-8")
+                else:
+                    response_data = response.data
+
+                # Inject before closing </head> tag (single replacement)
+                if b"</head>" in response_data:
+                    modified_data = response_data.replace(
+                        b"</head>",
+                        injector + b"</head>",
+                        1,  # Replace only first occurrence
+                    )
+                    response.data = modified_data
+
+                    # Remove Content-Length header - let Flask/compression middleware recalculate
+                    # This is important because Flask-Compress will recalculate it after compression
+                    response.headers.pop("Content-Length", None)
+
+                    # Ensure charset is set if not already
+                    if "charset" not in response.content_type.lower():
+                        response.content_type = f"{response.content_type}; charset=utf-8"
+
+            except Exception as e:
+                # Log the error but don't break the response
+                logger.warning(
+                    "Failed to inject navbar-hiding CSS: %s",
+                    str(e),
+                    exc_info=True,
+                )
+
+        return response
+
+    return app
+
+
 # If a callable is specified, it will be called at app startup while passing
 # a reference to the Flask app. This can be used to alter the Flask app
 # in whatever way.
 # example: FLASK_APP_MUTATOR = lambda x: x.before_request = f
-FLASK_APP_MUTATOR = None
+FLASK_APP_MUTATOR = app_mutator
 
 # smtp server configuration
 SMTP_HOST = "localhost"
