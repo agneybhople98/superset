@@ -55,12 +55,25 @@ export type ChartCreationState = {
   datasetName?: string | string[] | null;
   vizType: string | null;
   canCreateDataset: boolean;
+  docUrl: string;
 };
 
 const ESTIMATED_NAV_HEIGHT = 56;
 const ELEMENTS_EXCEPT_VIZ_GALLERY = ESTIMATED_NAV_HEIGHT + 250;
 
 const bootstrapData = getBootstrapData();
+
+// Define the base URL and dataset to URL mapping
+const DOCS_BASE_URL = 'https://docs.riaproducts.com/rda/3.x.x/docs/subject-areas';
+
+const DATASET_URLS: Record<string, string> = {
+  'acct_obj': `${DOCS_BASE_URL}/account/#acct_obj`,
+  'bseg_obj': `${DOCS_BASE_URL}/bill-segment/#bseg_obj`,
+  'bill_chg_obj': `${DOCS_BASE_URL}/bill-charge/#bill_chg_obj`,
+  'cis_division_obj': `${DOCS_BASE_URL}/cis-division/#cis_division_obj`,
+  'ft_proc_obj': `${DOCS_BASE_URL}/financial-transaction/#ft_proc_obj`,
+};
+
 const denyList: string[] = (
   bootstrapData.common.conf.VIZ_TYPE_DENYLIST || []
 ).concat(Object.values(FilterPlugins));
@@ -184,6 +197,7 @@ export class ChartCreation extends PureComponent<
         'Dataset',
         props.user.roles,
       ),
+      docUrl: 'https://docs.riaproducts.com/rda/3.x.x/docs/web-application/charts/',
     };
 
     this.changeDatasource = this.changeDatasource.bind(this);
@@ -218,8 +232,18 @@ export class ChartCreation extends PureComponent<
   }
 
   changeDatasource(datasource: { label: string | ReactNode; value: string }) {
-    this.setState({ datasource });
+    const extractedValue = datasource.value.split("__").pop()?.toLowerCase() || '';
+    
+    // Get the URL for the selected dataset or fallback to default
+    const docUrl = DATASET_URLS[extractedValue] || this.state.docUrl;
+
+    // Update state with both datasource and docUrl
+    this.setState({ 
+      datasource,
+      docUrl
+    });
   }
+
 
   changeVizType(vizType: string | null) {
     this.setState({ vizType });
@@ -259,9 +283,9 @@ export class ChartCreation extends PureComponent<
         value: string;
       }[] = response.json.result.map((item: Dataset) => ({
         id: item.id,
-        value: `${item.id}__${item.datasource_type}`,
+        value: `${item.id}__${item.datasource_type}__${item.table_name}`,
         label: DatasetSelectLabel(item),
-        customLabel: item.table_name,
+        customLabel: item.table_name
       }));
       return {
         data: list,
@@ -281,7 +305,7 @@ export class ChartCreation extends PureComponent<
         </Link>{' '}
         {t('or')}{' '}
         <a
-          href="https://docs.riaproducts.com/rda/3.x.x/docs/web-application/charts/"
+          href={this.state.docUrl}
           rel="noopener noreferrer"
           target="_blank"
           data-test="add-chart-new-dataset-instructions"
@@ -294,7 +318,7 @@ export class ChartCreation extends PureComponent<
     ) : (
       <span data-test="no-dataset-write">
         <a
-          href="https://docs.riaproducts.com/rda/3.x.x/docs/web-application/charts/"
+          href={this.state.docUrl}
           rel="noopener noreferrer"
           target="_blank"
         >
