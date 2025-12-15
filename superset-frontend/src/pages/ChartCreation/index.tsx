@@ -25,6 +25,7 @@ import {
   SupersetClient,
   t,
 } from '@superset-ui/core';
+
 import { withTheme, Theme } from '@emotion/react';
 import { getUrlParam } from 'src/utils/urlUtils';
 import { FilterPlugins, URL_PARAMS } from 'src/constants';
@@ -62,16 +63,134 @@ const ESTIMATED_NAV_HEIGHT = 56;
 const ELEMENTS_EXCEPT_VIZ_GALLERY = ESTIMATED_NAV_HEIGHT + 250;
 
 const bootstrapData = getBootstrapData();
-
 // Define the base URL and dataset to URL mapping
-const DOCS_BASE_URL = 'https://docs.riaproducts.com/rda/3.x.x/docs/subject-areas';
+const DOCS_BASE_URL = (getBootstrapData().common.feature_flags as Record<string, unknown>).CLIENT_DOCS_BASE_URL as string ?? 'https://docs.riaproducts.com/rda/3.x.x/docs/subject-areas';
 
 const DATASET_URLS: Record<string, string> = {
-  'acct_obj': `${DOCS_BASE_URL}/account/#acct_obj`,
-  'bseg_obj': `${DOCS_BASE_URL}/bill-segment/#bseg_obj`,
-  'bill_chg_obj': `${DOCS_BASE_URL}/bill-charge/#bill_chg_obj`,
-  'cis_division_obj': `${DOCS_BASE_URL}/cis-division/#cis_division_obj`,
-  'ft_proc_obj': `${DOCS_BASE_URL}/financial-transaction/#ft_proc_obj`,
+  // Account
+  acct_obj: `${DOCS_BASE_URL}/account/#acct_obj`,
+  acct_alert_obj: `${DOCS_BASE_URL}/account/#acct_alert_obj`,
+  acct_apay_obj: `${DOCS_BASE_URL}/account/#acct_apay_obj`,
+  acct_msg_obj: `${DOCS_BASE_URL}/account/#acct_msg_obj`,
+  adm_rvw_sch_obj: `${DOCS_BASE_URL}/account/#adm_rvw_sch_obj`,
+  cr_rat_hist_obj: `${DOCS_BASE_URL}/account/#cr_rat_hist_obj`,
+  ncd_obj: `${DOCS_BASE_URL}/account/#ncd_obj`,
+  per_addr_ovrd_obj: `${DOCS_BASE_URL}/account/#per_addr_ovrd_obj`,
+  ss_addr_phone_ovrd_obj: `${DOCS_BASE_URL}/account/#ss_addr_phone_ovrd_obj`,
+  ss_cont_ovrd_obj: `${DOCS_BASE_URL}/account/#ss_cont_ovrd_obj`,
+
+  // Accrual
+  accrual_obj: `${DOCS_BASE_URL}/accrual/#accrual_obj`,
+  accrual_dtls_obj: `${DOCS_BASE_URL}/accrual/#accrual_dtls_obj`,
+
+  // Address
+  address_obj: `${DOCS_BASE_URL}/address/#address_obj`,
+  address_log_obj: `${DOCS_BASE_URL}/address/#address_log_obj`,
+
+  // Adjustment Type
+  adj_type_obj: `${DOCS_BASE_URL}/adjustment-type/#adj_type_obj`,
+
+  // Adjustment
+  adj_obj: `${DOCS_BASE_URL}/adjustment/#adj_obj`,
+  adj_apreq_obj: `${DOCS_BASE_URL}/adjustment/#adj_apreq_obj`,
+  adj_calc_ln_obj: `${DOCS_BASE_URL}/adjustment/#adj_calc_ln_obj`,
+
+  // Bill Charge
+  bill_chg_obj: `${DOCS_BASE_URL}/bill-charge/#bill_chg_obj`,
+  bill_chg_line_obj: `${DOCS_BASE_URL}/bill-charge/#bill_chg_line_obj`,
+  bchg_read_obj: `${DOCS_BASE_URL}/bill-charge/#bchg_read_obj`,
+
+  // Bill Cycle
+  bill_cyc_obj: `${DOCS_BASE_URL}/bill-cycle/#bill_cyc_obj`,
+
+  // Bill Segment
+  bseg_obj: `${DOCS_BASE_URL}/bill-segment/#bseg_obj`,
+  bseg_calc_ln_obj: `${DOCS_BASE_URL}/bill-segment/#bseg_calc_ln_obj`,
+  bseg_item_obj: `${DOCS_BASE_URL}/bill-segment/#bseg_item_obj`,
+  bseg_msg_obj: `${DOCS_BASE_URL}/bill-segment/#bseg_msg_obj`,
+  bseg_read_obj: `${DOCS_BASE_URL}/bill-segment/#bseg_read_obj`,
+
+  // Bill
+  bill_obj: `${DOCS_BASE_URL}/bill/#bill_obj`,
+  bill_msg_obj: `${DOCS_BASE_URL}/bill/#bill_msg_obj`,
+  bill_routing_obj: `${DOCS_BASE_URL}/bill/#bill_routing_obj`,
+  bill_sa_obj: `${DOCS_BASE_URL}/bill/#bill_sa_obj`,
+
+  // CIS Division
+  cis_division_obj: `${DOCS_BASE_URL}/cis-division/#cis_division_obj`,
+  cis_div_rtyp_obj: `${DOCS_BASE_URL}/cis-division/#cis_div_rtyp_obj`,
+  cis_div_seq_char_obj: `${DOCS_BASE_URL}/cis-division/#cis_div_seq_char_obj`,
+  div_td_role_obj: `${DOCS_BASE_URL}/cis-division/#div_td_role_obj`,
+
+  // Data Access
+  dar_obj: `${DOCS_BASE_URL}/data-access/#dar_obj`,
+  dar_usr_acc_grp_obj: `${DOCS_BASE_URL}/data-access/#dar_usr_acc_grp_obj`,
+
+  // Deposit Control
+  deposit_ctl_obj: `${DOCS_BASE_URL}/deposit-control/#deposit_ctl_obj`,
+
+  // Deposit Tender Control
+  dep_tndr_ctl_stg_obj: `${DOCS_BASE_URL}/deposit-tender-control/#dep_tndr_ctl_stg_obj`,
+
+  // Distribution Code
+  distr_code_obj: `${DOCS_BASE_URL}/distribution-code/#dist_cd_obj`,
+
+  // External Lookup
+  f1_ext_lookup_obj: `${DOCS_BASE_URL}/external-lookup/#f1_ext_lookup_obj`,
+
+  // Financial Transaction
+  ft_obj: `${DOCS_BASE_URL}/financial-transaction/#ft_obj`,
+  ft_proc_obj: `${DOCS_BASE_URL}/financial-transaction/#ft_proc_obj`,
+
+  // General Ledger Division
+  gl_division_obj: `${DOCS_BASE_URL}/general-ledger-division/#gl_division_obj`,
+
+  // Member
+  membership_obj: `${DOCS_BASE_URL}/member/#membership_obj`,
+  membership_per_obj: `${DOCS_BASE_URL}/member/#membership_per_obj`,
+  membership_sa_obj: `${DOCS_BASE_URL}/member/#membership_sa_obj`,
+
+  // Payment Event
+  apay_obj: `${DOCS_BASE_URL}/payment-event/#apay_obj`,
+  pay_evt_obj: `${DOCS_BASE_URL}/payment-event/#pay_evt_obj`,
+  pay_tndr_obj: `${DOCS_BASE_URL}/payment-event/#pay_tndr_obj`,
+
+  // Payment
+  pay_obj: `${DOCS_BASE_URL}/payment/#pay_obj`,
+  pay_excp_obj: `${DOCS_BASE_URL}/payment/#pay_excp_obj`,
+
+  // Person
+  per_obj: `${DOCS_BASE_URL}/person/#per_obj`,
+  per_addr_seas_obj: `${DOCS_BASE_URL}/person/#per_addr_seas_obj`,
+  per_contdet_obj: `${DOCS_BASE_URL}/person/#per_contdet_obj`,
+  per_ss_payopt_obj: `${DOCS_BASE_URL}/person/#per_ss_payopt_obj`,
+
+  // Policy Plan
+  policy_plan_obj: `${DOCS_BASE_URL}/policy-plan/#policy_plan_obj`,
+
+  // Policy
+  policy_obj: `${DOCS_BASE_URL}/policy/#policy_obj`,
+  policy_log_obj: `${DOCS_BASE_URL}/policy/#policy_obj`,
+
+  // Price Item
+  priceitem_obj: `${DOCS_BASE_URL}/price-item/#priceitem_obj`,
+
+  // Service Agreement
+  sa_obj: `${DOCS_BASE_URL}/service-agreement/#sa_obj`,
+  sa_cop_obj: `${DOCS_BASE_URL}/service-agreement/#sa_cop_obj`,
+  sa_sp_obj: `${DOCS_BASE_URL}/service-agreement/#sa_sp_obj`,
+  bill_scnr_obj: `${DOCS_BASE_URL}/service-agreement/#bill_scnr_obj`,
+  nbb_obj: `${DOCS_BASE_URL}/service-agreement/#nbb_obj`,
+
+  // Tender Control
+  tndr_ctl_obj: `${DOCS_BASE_URL}/tender-control/#tndr_ctl_obj`,
+  tndr_end_bal_obj: `${DOCS_BASE_URL}/tender-control/#tndr_end_bal_obj`,
+
+  // Tender Source
+  tndr_src_obj: `${DOCS_BASE_URL}/tender-source/#tndr_src_obj`,
+
+  // Tender Type
+  tndr_type_obj: `${DOCS_BASE_URL}/tender-type/#tndr_type_obj`,
 };
 
 const denyList: string[] = (
@@ -205,6 +324,8 @@ export class ChartCreation extends PureComponent<
     this.gotoSlice = this.gotoSlice.bind(this);
     this.loadDatasources = this.loadDatasources.bind(this);
     this.onVizTypeDoubleClick = this.onVizTypeDoubleClick.bind(this);
+    console.log("DOCS_BASE_URL ==>", DOCS_BASE_URL);
+    console.log("Direct DOCS_BASE_URL from Feature Flag ==>", (getBootstrapData().common.feature_flags as Record<string, unknown>).CLIENT_DOCS_BASE_URL as string);
   }
 
   componentDidMount() {
